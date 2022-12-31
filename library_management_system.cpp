@@ -3,6 +3,124 @@
 #include <string.h>
 #include <math.h>
 
+//////////////////////////////////////////////////////////////////////////
+
+void printTitle(char a[]);
+void stringToCaps(char a[]);
+
+int play()
+{
+    int userHand, computerHand;
+    char userHandString[10], computerHandString[10];
+
+    int result;
+
+    int keepAsking;
+    char keepPlaying = 'Y';
+
+    /*Start randomizer*/
+    // srand(time(NULL));
+
+    while (keepPlaying == 'Y' || keepPlaying == 'y')
+    {
+        /*Generate computer's hand*/
+        computerHand = rand() % 3;
+
+        switch (computerHand)
+        {
+        case 0:
+            strcpy(computerHandString, "ROCK");
+            break;
+        case 1:
+            strcpy(computerHandString, "PAPER");
+            break;
+        case 2:
+            strcpy(computerHandString, "SCISSORS");
+            break;
+        default:
+            break;
+        }
+
+        /*Game*/
+        printTitle("ROCK, PAPER, SCISSORS BY Rahman Mehraj");
+
+        do
+        {
+            printf("\nType Rock, paper or scissors.");
+            printf("\nRock, paper or scissors?: ");
+
+            scanf("%s", userHandString);
+            stringToCaps(userHandString);
+
+            keepAsking = 0;
+
+            if (strcmp(userHandString, "ROCK") == 0)
+                userHand = 0;
+            else if (strcmp(userHandString, "PAPER") == 0)
+                userHand = 1;
+            else if (strcmp(userHandString, "SCISSORS") == 0)
+                userHand = 2;
+            else
+                keepAsking = 1;
+        } while (keepAsking == 1);
+
+        printf("\n\nYour hand: %s", userHandString);
+        printf("\nComputer's hand: %s\n\n", computerHandString);
+
+        result = userHand - computerHand;
+        if (result < 0)
+            result += 3;
+
+        switch (result)
+        {
+        case 0:
+            printf("It's a draw, gg\n\n");
+            break;
+        case 1:
+            printf("YOU WON YAY!\n\n");
+            break;
+        case 2:
+            printf("Oh, you lost. GG EZ NOOB\n\n");
+            break;
+        default:
+            break;
+        }
+
+        do
+        {
+            printf("Do you want to keep playing? [Y/N]: ");
+            // fflush(stdin);
+            scanf("%c", &keepPlaying);
+        } while (keepPlaying != 'y' && keepPlaying != 'Y' && keepPlaying != 'n' && keepPlaying != 'N');
+        system("@cls||clear");
+    }
+
+    printTitle("Thanks for playing! UwU");
+
+    return 0;
+}
+
+void printTitle(char a[])
+{
+    int j = 0;
+    printf("%c%c", 176, 177);
+    while (a[j] != '\0')
+    {
+        printf("%c", a[j]);
+        j++;
+    }
+    printf("%c%c\n", 177, 176);
+}
+
+void stringToCaps(char a[])
+{
+    for (int i = 0; i < strlen(a); i++)
+        if (a[i] > 96 && a[i] < 123)
+            a[i] -= 32;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 struct book
 {
     char title[100];
@@ -31,34 +149,120 @@ void greet()
     printf("___________________________________________________________________________________________________\n");
 }
 
-void addBooks()
+void addBooks(struct book booklist[], int len)
 {
+    int flag = 0;
+    int searchIndex = 0;
 
     FILE *fptr = fopen("books.txt", "a");
+    FILE *fptr2 = fopen("books.txt", "r");
+    FILE *fptr1 = fopen("book.txt", "w");
     struct book newBook;
-
     printf("Add book Title: \n");
     fgets(newBook.title, 100, stdin);
 
-    printf("Add book Author: \n");
-    fgets(newBook.author, 100, stdin);
+    for (int i = 0; i < len; i++)
+    {
+        flag = 0;
+        for (int j = 0; booklist[i].title[j] != '\0' || newBook.title[j] != '\0'; j++)
+        {
+            if ((booklist[i].title[j]) != newBook.title[j])
+            {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0)
+        {
+            searchIndex = i;
+            break;
+        }
+    }
 
-    printf("Add book ISBN: \n");
-    fgets(newBook.isbn, sizeof newBook.isbn, stdin);
+    if (flag == 0)
+    {
+        printf("This Book already Exist!!");
+        printf("Add Number of copy which will be added: \n");
+        scanf("%d", &newBook.numCopy);
+        booklist[searchIndex].numCopy += newBook.numCopy;
+        int line = (searchIndex + 1) * 5, currentLine = 0;
+        int index = 0;
+        char singleBook[100];
+        while (!feof(fptr2))
+        {
 
-    printf("Add book edition: \n");
-    fgets(newBook.edition, sizeof newBook.isbn, stdin);
+            if (!feof(fptr2))
+            {
+                fgets(singleBook, 100, fptr2);
+                currentLine++;
 
-    printf("Add book number of copy: \n");
-    scanf("%d", &newBook.numCopy);
+                if (currentLine == line)
+                {
+                    fprintf(fptr1, "%d", booklist[searchIndex].numCopy);
+                    fprintf(fptr1, "\n");
+                }
+                else
+                {
+                    fprintf(fptr1, "%s", singleBook);
+                }
+            }
+        }
 
-    fputs(newBook.title, fptr);
-    fputs(newBook.author, fptr);
-    fputs(newBook.isbn, fptr);
-    fputs(newBook.edition, fptr);
-    fprintf(fptr, "%d", newBook.numCopy);
-    fprintf(fptr, "\n");
-    fclose(fptr);
+        fclose(fptr1);
+        fclose(fptr2);
+        currentLine = 0;
+        FILE *fptr3 = fopen("book.txt", "r");
+        FILE *fptr4 = fopen("books.txt", "w");
+
+        while (!feof(fptr3))
+        {
+
+            if (!feof(fptr3))
+            {
+                fgets(singleBook, 100, fptr3);
+                puts(singleBook);
+                currentLine++;
+
+                if (currentLine == line)
+                {
+                    fprintf(fptr4, "%d", booklist[searchIndex].numCopy);
+                    fprintf(fptr4, "\n");
+                }
+                else
+                {
+                    fprintf(fptr4, "%s", singleBook);
+                }
+            }
+        }
+        fprintf(fptr4, "\n");
+
+        fclose(fptr);
+
+        fclose(fptr3);
+        fclose(fptr4);
+    }
+    else
+    {
+        printf("Add book Author: \n");
+        fgets(newBook.author, 100, stdin);
+
+        printf("Add book ISBN: \n");
+        fgets(newBook.isbn, sizeof newBook.isbn, stdin);
+
+        printf("Add book edition: \n");
+        fgets(newBook.edition, sizeof newBook.isbn, stdin);
+
+        printf("Add book number of copy: \n");
+        scanf("%d", &newBook.numCopy);
+
+        fputs(newBook.title, fptr);
+        fputs(newBook.author, fptr);
+        fputs(newBook.isbn, fptr);
+        fputs(newBook.edition, fptr);
+        fprintf(fptr, "%d", newBook.numCopy);
+        fprintf(fptr, "\n");
+        fclose(fptr);
+    }
 }
 
 void showBooks(struct book booklist[], int len)
@@ -140,7 +344,7 @@ void searchBooks(struct book booklist[], int len)
     for (int i = 0; i < len; i++)
     {
         flag = 0;
-        for (int j = 0; booklist[i].isbn[j] != '\0' || booksearch[j] != '\0'; j++)
+        for (int j = 0; booklist[i].title[j] != '\0' || booksearch[j] != '\0'; j++)
         {
             if ((booklist[i].title[j]) != booksearch[j])
             {
@@ -200,7 +404,7 @@ int main()
     while (true)
     {
         greet();
-        printf("Press 1 for add student. \nPress 2 for show all books. \nPress 3 for search Book. \nPress 4 for add student: \nPress 7 for exit:\n");
+        printf("Press 1 for add student. \nPress 2 for show all books. \nPress 3 for search Book. \nPress 4 for add student: \nPress 5 for play Games: \nPress 7 for exit:\n");
 
         scanf("%d", &choice);
         char buffer[5];
@@ -208,7 +412,7 @@ int main()
 
         if (choice == 1)
         {
-            addBooks();
+            addBooks(booklist, len);
         }
         else if (choice == 2)
         {
@@ -221,6 +425,10 @@ int main()
         else if (choice == 4)
         {
             addStudent();
+        }
+        else if (choice == 5)
+        {
+            play();
         }
         else if (choice == 7)
         {
