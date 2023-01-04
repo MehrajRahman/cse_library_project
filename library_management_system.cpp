@@ -1,3 +1,12 @@
+
+//|||||||||||||| Library Management System ||||||||||||||||||||
+// Group Name: Milky_Way
+// Members:
+// 1. Anmun Sultana                ID: 2022-3-60-248
+// 2. Md Moon Rahman Nayem         ID: 2022-3-60-315
+// 3. Md. Jabed Iqbal Sami         ID: 2022-3-60-313
+// 4. Mahamudur Rahman Mehraj      ID: 2022-3-60-209
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -158,6 +167,7 @@ void addBooks(struct book booklist[], int len)
     FILE *fptr2 = fopen("books.txt", "r");
     FILE *fptr1 = fopen("book.txt", "w");
     struct book newBook;
+    system("@cls||clear");
     printf("Add book Title: \n");
     fgets(newBook.title, 100, stdin);
 
@@ -403,6 +413,7 @@ int main()
     int len = loadBooks(booklist);
     while (true)
     {
+        system("@cls||clear");
         greet();
         printf("Press 1 for add student. \nPress 2 for show all books. \nPress 3 for search Book. \nPress 4 for add student: \nPress 5 for play Games: \nPress 7 for exit:\n");
 

@@ -12,12 +12,12 @@ Let Us C
 Yashavant P. Kanetkar
 8183331637
 15th Edition
-330
+320
 C++ Primer
 Stanley Lippman
 9780321714114
 15th Edition
-180
+177
 New Book
 no author
 0089756
@@ -28,3 +28,13 @@ Lorey Stanley
 008975422
 Fourth Edition
 10000
+Hello World!
+Mehraj Rahman
+00258963258
+No Edition
+120
+Damn Book
+Damn Writer
+0036589
+fourth
+158
