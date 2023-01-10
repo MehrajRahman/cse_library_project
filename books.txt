@@ -2,7 +2,7 @@ To Kill a Mockingbird
 Harper Lee
 008950165
 Third Edition
-158
+152
 The Beginner's Guide to C#
 Eric Frick
 152190555X
@@ -12,12 +12,12 @@ Let Us C
 Yashavant P. Kanetkar
 8183331637
 15th Edition
-320
+323
 C++ Primer
 Stanley Lippman
 9780321714114
 15th Edition
-177
+179
 New Book
 no author
 0089756
@@ -38,3 +38,8 @@ Damn Writer
 0036589
 fourth
 158
+Hello World
+Me
+556689
+Hell th Edition
+1782

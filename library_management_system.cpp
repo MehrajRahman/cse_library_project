@@ -1,12 +1,3 @@
-
-//|||||||||||||| Library Management System ||||||||||||||||||||
-// Group Name: Milky_Way
-// Members:
-// 1. Anmun Sultana                ID: 2022-3-60-248
-// 2. Md Moon Rahman Nayem         ID: 2022-3-60-315
-// 3. Md. Jabed Iqbal Sami         ID: 2022-3-60-313
-// 4. Mahamudur Rahman Mehraj      ID: 2022-3-60-209
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -139,6 +130,11 @@ struct book
     int numCopy;
 };
 
+struct borrowbook
+{
+    char isbn[100];
+};
+
 struct student
 {
     char name[100];
@@ -146,7 +142,20 @@ struct student
     char mail[100];
     char semester[20];
     char phone[15];
+    char username[20];
+    char password[15];
+    int booksBorrowed = 0;
+    struct borrowbook borrowBookStruct[10];
 };
+
+struct cred
+{
+    char username[100];
+    char password[100];
+} creden;
+
+struct book booklist[2000];
+struct student studentlist[2000];
 
 void greet()
 {
@@ -155,6 +164,36 @@ void greet()
     printf(" %55s", "EWU LIBRARY MANAGEMENT SYSTEM");
     printf("%35s\n", "||||||||");
     printf("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n");
+    printf("___________________________________________________________________________________________________\n");
+}
+
+void greetAdmin()
+{
+    printf("###################################################################################################\n");
+    printf("#######");
+    printf(" %55s", "EWU LIBRARY MANAGEMENT SYSTEM");
+    printf("%35s\n", "#######");
+
+    printf("___________________________________________________________________________________________________\n");
+
+    printf("#######");
+    printf(" %45s", "ADMIN PANEL");
+    printf("%45s\n", "#######");
+    printf("###################################################################################################\n");
+    printf("___________________________________________________________________________________________________\n");
+}
+
+void greetStudent()
+{
+    printf("###################################################################################################\n");
+    printf("#######");
+    printf(" %55s", "EWU LIBRARY MANAGEMENT SYSTEM");
+    printf("%35s\n", "#######");
+    printf("___________________________________________________________________________________________________\n");
+    printf("#######");
+    printf(" %45s", "STUDENT PANEL");
+    printf("%45s\n", "#######");
+    printf("###################################################################################################\n");
     printf("___________________________________________________________________________________________________\n");
 }
 
@@ -167,7 +206,6 @@ void addBooks(struct book booklist[], int len)
     FILE *fptr2 = fopen("books.txt", "r");
     FILE *fptr1 = fopen("book.txt", "w");
     struct book newBook;
-    system("@cls||clear");
     printf("Add book Title: \n");
     fgets(newBook.title, 100, stdin);
 
@@ -321,19 +359,7 @@ int loadBooks(struct book booklist[])
         }
         else if (index == 4)
         {
-            int n = 0;
-            int s = 0;
-            for (s = 0; singleBook[s] != '\0'; s++)
-            {
-            }
-            int t = 0;
-            for (int i = s - 2; i >= 0; i--)
-            {
-                n += pow(10, t) * (singleBook[i] - '0');
-                t++;
-            }
-
-            booklist[trc].numCopy = n;
+            booklist[trc].numCopy = atoi(singleBook);
             index = 0;
             trc++;
         }
@@ -378,6 +404,25 @@ void searchBooks(struct book booklist[], int len)
     printf("\n");
 }
 
+char *validmail(char mail[])
+{
+
+    char *p;
+    char *q;
+
+    // Find first occurrence of s2 in s1
+    p = strstr(mail, ".");
+    q = strstr(mail, "@");
+    if (p != NULL && q != NULL)
+    {
+        return p;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 void addStudent()
 {
     FILE *fptr = fopen("students.txt", "a");
@@ -389,61 +434,530 @@ void addStudent()
     printf("Add id: \n");
     fgets(newStudent.id, 100, stdin);
 
-    printf("Add mail: \n");
-    fgets(newStudent.mail, sizeof newStudent.mail, stdin);
+    while (true)
+    {
+        printf("Add mail: \n");
+        fgets(newStudent.mail, sizeof newStudent.mail, stdin);
+        char *p = validmail(newStudent.mail);
+        if (p == NULL)
+        {
+            printf("Your email should include @ and .!!! kindly insert right address.");
+        }
+        else
+        {
+            break;
+        }
+    }
 
     printf("Add Semester: \n");
     fgets(newStudent.semester, sizeof newStudent.semester, stdin);
 
     printf("Add Phone number of a Student: \n");
-    fgets(newStudent.phone, sizeof newStudent.phone, stdin);
+    fgets(newStudent.phone, 15, stdin);
 
     fputs(newStudent.name, fptr);
     fputs(newStudent.id, fptr);
     fputs(newStudent.mail, fptr);
     fputs(newStudent.semester, fptr);
     fputs(newStudent.phone, fptr);
+    fputs(newStudent.id, fptr);
+    fputs("12345", fptr);
+    fputs("\n", fptr);
+    fputs("0", fptr);
+    fputs("\n", fptr);
+    fputs("", fptr);
+    fputs("\n", fptr);
+
     fclose(fptr);
+}
+
+int loadStudent(struct student studentlist[])
+{
+    FILE *fptr = fopen("students.txt", "r");
+
+    int index = 0;
+    int trc = 0;
+    char singleStudent[100];
+
+    while (fgets(singleStudent, 100, fptr) != NULL)
+    {
+        if (index == 0)
+        {
+            strcpy(studentlist[trc].name, singleStudent);
+            index++;
+        }
+        else if (index == 1)
+        {
+            strcpy(studentlist[trc].id, singleStudent);
+            index++;
+        }
+        else if (index == 2)
+        {
+            strcpy(studentlist[trc].mail, singleStudent);
+            index++;
+        }
+        else if (index == 3)
+        {
+            strcpy(studentlist[trc].semester, singleStudent);
+            index++;
+        }
+        else if (index == 4)
+        {
+            strcpy(studentlist[trc].phone, singleStudent);
+            index++;
+        }
+        else if (index == 5)
+        {
+            strcpy(studentlist[trc].username, singleStudent);
+            index++;
+        }
+        else if (index == 6)
+        {
+            strcpy(studentlist[trc].password, singleStudent);
+            index++;
+        }
+        else if (index == 7)
+        {
+            studentlist[trc].booksBorrowed = atoi(singleStudent);
+            index++;
+        }
+        else if (index == 8)
+        {
+            if (studentlist[trc].booksBorrowed > 0)
+            {
+                int n = studentlist[trc].booksBorrowed;
+                int count = 0, ind = 0;
+                char isbn[100];
+                for (int i = 0; singleStudent[i] != '\0'; i++)
+                {
+                    if (singleStudent[i] == ':')
+                    {
+                        strcpy(studentlist[trc].borrowBookStruct[ind].isbn, isbn);
+                        ind++;
+                        count = 0;
+                    }
+                    else
+                    {
+                        isbn[count] = singleStudent[i];
+                        count++;
+                    }
+                }
+            }
+
+            index = 0;
+            trc++;
+        }
+    }
+
+    fclose(fptr);
+
+    return trc;
+}
+
+void showStudent(struct student studentlist[], int len)
+{
+
+    for (int i = 0; i < len; i++)
+    {
+        fputs(studentlist[i].name, stdout);
+        fputs(studentlist[i].id, stdout);
+        fputs(studentlist[i].mail, stdout);
+        fputs(studentlist[i].semester, stdout);
+        fputs(studentlist[i].phone, stdout);
+    }
+}
+
+void searchStudent(struct student studentlist[], int len)
+{
+    char studentId[100];
+    printf("Enter Student Id: ");
+    fgets(studentId, sizeof studentId, stdin);
+    int flag = 0;
+    for (int i = 0; i < len; i++)
+    {
+        int val = strcmp(studentlist[i].id, studentId);
+        if (val == 0)
+        {
+            printf("Student Matched!!\n");
+            puts(studentlist[i].name);
+            puts(studentlist[i].id);
+            puts(studentlist[i].mail);
+            puts(studentlist[i].semester);
+            puts(studentlist[i].phone);
+            flag = 1;
+            break;
+        }
+    }
+
+    if (flag == 0)
+    {
+        printf("Student Does not matched!!");
+    }
+}
+
+void bookfile(int len)
+{
+    FILE *fptr = fopen("books.txt", "w");
+
+    for (int i = 0; i < len; i++)
+    {
+        fputs(booklist[i].title, fptr);
+        fputs(booklist[i].author, fptr);
+        fputs(booklist[i].isbn, fptr);
+        fputs(booklist[i].edition, fptr);
+        fprintf(fptr, "%d", booklist[i].numCopy);
+        fprintf(fptr, "\n");
+    }
+
+    fclose(fptr);
+}
+
+void studentfile(int stdlen)
+{
+    FILE *fptr = fopen("students.txt", "w");
+
+    for (int i = 0; i < stdlen; i++)
+    {
+        fputs(studentlist[i].name, fptr);
+        fputs(studentlist[i].id, fptr);
+        fputs(studentlist[i].mail, fptr);
+        fputs(studentlist[i].semester, fptr);
+        fputs(studentlist[i].phone, fptr);
+        fputs(studentlist[i].username, fptr);
+        fputs(studentlist[i].password, fptr);
+
+        fprintf(fptr, "%d", studentlist[i].booksBorrowed);
+        fputs("\n", fptr);
+        char bookisbn[1000] = "";
+        char sep[] = ":";
+        if (studentlist[i].booksBorrowed > 0)
+        {
+            for (int j = 0; j < studentlist[i].booksBorrowed; j++)
+            {
+                char isbn[100];
+                strcpy(isbn, studentlist[i].borrowBookStruct[j].isbn);
+                isbn[strcspn(isbn, "\n")] = '\0';
+                strcat(bookisbn, isbn);
+                strcat(bookisbn, sep);
+                // puts(bookisbn);
+            }
+            fputs(bookisbn, fptr);
+            fputs("\n", fptr);
+        }
+        else
+        {
+            fputs("", fptr);
+            fputs("\n", fptr);
+        }
+    }
+
+    fclose(fptr);
+}
+
+void borrowbook(struct student studentlist[], int stdlen, struct book booklist[], int len)
+{
+    printf("Enter The book Name you want to borrow .Book Name must be inside 100 characters. \n");
+    char bookName[100];
+    fgets(bookName, sizeof bookName, stdin);
+    int searchIndex, flag = 0, userInput;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (!strcmp(booklist[i].title, bookName))
+        {
+            printf("Book Title: ");
+            puts(booklist[i].title);
+            printf("Book Author: ");
+            puts(booklist[i].author);
+            printf("Book ISBN: ");
+            puts(booklist[i].isbn);
+            printf("Book Edition: ");
+            puts(booklist[i].edition);
+            printf("Available Copy: ");
+            printf("%d", booklist[i].numCopy);
+            printf("\n");
+            searchIndex = i;
+            flag = 1;
+            break;
+        }
+    }
+
+    if (flag == 1)
+    {
+        if (booklist[searchIndex].numCopy > 1)
+        {
+            printf("Are you sure you want to borrow the book? Press 1 to to confirm or 0 to cancel.\n");
+            scanf("%d", &userInput);
+
+            for (int i = 0; i < stdlen; i++)
+            {
+                if ((strcmp(creden.username, studentlist[i].username) == 0) && (strcmp(creden.password, studentlist[i].password) == 0))
+                {
+                    studentlist[i].booksBorrowed += 1;
+                    booklist[searchIndex].numCopy -= 1;
+                    strcpy(studentlist[i].borrowBookStruct[studentlist[i].booksBorrowed - 1].isbn, booklist[searchIndex].isbn);
+                    bookfile(len);
+                    studentfile(stdlen);
+                }
+            }
+        }
+        else
+        {
+            printf("Sorry! This book is not currently available for borrow. Kindly contact with us later.");
+        }
+    }
+}
+
+int returnbook(struct student studentlist[], int stdlen, struct book booklist[], int len)
+{
+    printf("Enter The book Name you want to Return. Book Name must be inside 100 characters. \n");
+    char bookName[100];
+
+    fgets(bookName, sizeof bookName, stdin);
+    int searchIndexBook, flag = 0, userInput, searchIndexStudent = 0, check = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (!strcmp(booklist[i].title, bookName))
+        {
+            searchIndexBook = i;
+            flag = 1;
+            break;
+        }
+    }
+
+    if (flag == 1)
+    {
+        if (userInput)
+        {
+            for (int i = 0; i < stdlen; i++)
+            {
+                if ((strcmp(creden.username, studentlist[i].username) == 0) && (strcmp(creden.password, studentlist[i].password) == 0))
+                {
+                    searchIndexStudent = i;
+                    check = 1;
+                }
+            }
+            if (check)
+            {
+                int checkBook = 0;
+                for (int j = 0; j < studentlist[searchIndexStudent].booksBorrowed; j++)
+                {
+                    if (!strcmp(studentlist[searchIndexStudent].borrowBookStruct[j].isbn, booklist[searchIndexBook].isbn))
+                    {
+
+                        if (checkBook == 0)
+                        {
+                            printf("Are you sure you want to Return the book? Press 1 to to confirm or 0 to cancel.\n");
+                            scanf("%d", &userInput);
+                        }
+                        checkBook = 1;
+                        if (userInput == 0)
+                        {
+                            return 0;
+                        }
+                    }
+                    if (checkBook == 1 && j < studentlist[searchIndexStudent].booksBorrowed - 1)
+                    {
+                        strcpy(studentlist[searchIndexStudent].borrowBookStruct[j].isbn, studentlist[searchIndexStudent].borrowBookStruct[j + 1].isbn);
+                    }
+                }
+                if (checkBook == 0)
+                {
+                    printf("You have not Borrowed the book Yet or Returned it Already! Thank You!\n");
+                }
+                studentlist[searchIndexStudent].booksBorrowed -= 1;
+                booklist[searchIndexBook].numCopy += 1;
+                bookfile(len);
+                studentfile(stdlen);
+            }
+        }
+        else
+        {
+            printf("Sorry! This book is not currently available for borrow. Kindly contact with us later.");
+        }
+    }
+}
+
+int adminPanel(int len, int stdlen)
+{
+    int choice;
+
+    char username[20];
+    char password[15];
+
+    while (true)
+    {
+
+        printf("Enter the user name:");
+        fgets(username, sizeof username, stdin);
+
+        printf("Enter the password:");
+        fgets(password, sizeof password, stdin);
+
+        username[strcspn(username, "\n")] = '\0';
+        password[strcspn(password, "\n")] = '\0';
+
+        if ((strcmp(username, "admin") == 0) && (strcmp(password, "12345") == 0))
+        {
+            while (true)
+            {
+                greetAdmin();
+                printf("Press 1 to See All Books. \n");
+                printf("Press 2 to Search Books. \n");
+                printf("Press 3 to See All Student. \n");
+                printf("Press 4 to Search Student. \n");
+                printf("Press 5 to Add Books. \n");
+                printf("Press 6 to Add Student. \n");
+                printf("Press 0 to Return to the main menu. \n");
+                scanf("%d", &choice);
+                char buffer[5];
+                fgets(buffer, 5, stdin);
+
+                if (choice == 1)
+                {
+                    showBooks(booklist, len);
+                }
+                else if (choice == 2)
+                {
+                    searchBooks(booklist, len);
+                }
+                else if (choice == 3)
+                {
+                    showStudent(studentlist, stdlen);
+                }
+                else if (choice == 4)
+                {
+                    searchStudent(studentlist, stdlen);
+                }
+                else if (choice == 5)
+                {
+                    addBooks(booklist, len);
+                }
+                else if (choice == 6)
+                {
+                    addStudent();
+                }
+                else if (choice == 0)
+                {
+                    return 0;
+                }
+            }
+        }
+        else
+        {
+            printf("You entered wrong creentials!");
+            return 0;
+        }
+    }
+}
+
+int studentPanel(int len, int stdlen)
+{
+    int choice;
+
+    char username[20];
+    char password[15];
+    while (true)
+    {
+        printf("Enter the user name:");
+        fgets(username, sizeof username, stdin);
+        printf("Enter the password:");
+        fgets(password, sizeof password, stdin);
+
+        int matched = 0;
+        for (int i = 0; i < stdlen; i++)
+        {
+            if ((strcmp(username, studentlist[i].username) == 0) && (strcmp(password, studentlist[i].password) == 0))
+            {
+                matched = 1;
+                strcpy(creden.username, studentlist[i].username);
+                strcpy(creden.password, studentlist[i].password);
+            }
+        }
+        if (matched == 1)
+        {
+            while (true)
+            {
+                greetStudent();
+                printf("Press 1 to See All Books. \n");
+                printf("Press 2 to Search Books. \n");
+                printf("Press 3 to See All Student. \n");
+                printf("Press 4 to Search Student. \n");
+                printf("Press 5 to Borrow Books. \n");
+                printf("Press 6 to Return Books. \n");
+                printf("Press 0 to Return to the main menu. \n");
+                scanf("%d", &choice);
+                char buffer[5];
+                fgets(buffer, 5, stdin);
+
+                if (choice == 1)
+                {
+                    showBooks(booklist, len);
+                }
+                else if (choice == 2)
+                {
+                    searchBooks(booklist, len);
+                }
+                else if (choice == 3)
+                {
+                    showStudent(studentlist, stdlen);
+                }
+                else if (choice == 4)
+                {
+                    searchStudent(studentlist, stdlen);
+                }
+                else if (choice == 5)
+                {
+                    borrowbook(studentlist, stdlen, booklist, len);
+                }
+                else if (choice == 6)
+                {
+                    returnbook(studentlist, stdlen, booklist, len);
+                }
+                else if (choice == 0)
+                {
+                    return 0;
+                }
+            }
+        }
+        else
+        {
+            printf("You entered wrong credentials!");
+            return 0;
+        }
+    }
 }
 
 int main()
 {
     int choice;
-    struct book booklist[2000];
-    int len = loadBooks(booklist);
+
     while (true)
     {
-        system("@cls||clear");
         greet();
-        printf("Press 1 for add student. \nPress 2 for show all books. \nPress 3 for search Book. \nPress 4 for add student: \nPress 5 for play Games: \nPress 7 for exit:\n");
+        printf("Press 1 to enter in admin panel. \n");
+        printf("Press 2 to enter in Student panel. \n");
+        printf("Press 0 to Close the Application. \n");
 
-        scanf("%d", &choice);
+        int len = loadBooks(booklist);
+        int stdlen = loadStudent(studentlist);
+
         char buffer[5];
+        scanf("%d", &choice);
         fgets(buffer, 5, stdin);
 
         if (choice == 1)
         {
-            addBooks(booklist, len);
+            adminPanel(len, stdlen);
         }
         else if (choice == 2)
         {
-            showBooks(booklist, len);
+            studentPanel(len, stdlen);
         }
-        else if (choice == 3)
+        else
         {
-            searchBooks(booklist, len);
-        }
-        else if (choice == 4)
-        {
-            addStudent();
-        }
-        else if (choice == 5)
-        {
-            play();
-        }
-        else if (choice == 7)
-        {
-            return 0;
+            break;
         }
     }
 }
